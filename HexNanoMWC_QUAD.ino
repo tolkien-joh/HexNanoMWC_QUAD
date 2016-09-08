@@ -12,7 +12,7 @@ March  2013     V2.2
 
 #include "config.h"
 #include "def.h"
-
+#include "extra.h"
 
 #include <avr/pgmspace.h>
 #define  VERSION  220

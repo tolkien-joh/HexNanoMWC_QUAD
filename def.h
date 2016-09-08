@@ -1,3 +1,5 @@
+#ifndef _DEF_H
+#define _DEF_H
 /**************************************************************************************/
 /***************             test configurations                   ********************/
 /**************************************************************************************/
@@ -1850,3 +1852,4 @@
 #if defined(LCD_TELEMETRY_STEP) && !(defined(LCD_TELEMETRY))
         #error "to use single step telemetry, you MUST also define and configure LCD_TELEMETRY"
 #endif
+#endif	/* _DEF_H */
