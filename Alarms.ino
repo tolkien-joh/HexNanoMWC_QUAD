@@ -138,23 +138,14 @@ void turnOff(uint8_t resource){
   }else if (resource == 2) {
     if (resourceIsOn[2]) {
       resourceIsOn[2] = 0;
-      #if defined (PILOTLAMP)
-        PilotLamp(PL_GRN_OFF);
-      #endif
     }
   }else if (resource == 3) {
     if (resourceIsOn[3]) {
       resourceIsOn[3] = 0;
-      #if defined (PILOTLAMP)
-        PilotLamp(PL_BLU_OFF);
-      #endif
     }
   }else if (resource == 4) {
     if (resourceIsOn[4]) {
       resourceIsOn[4] = 0;
-      #if defined (PILOTLAMP)
-        PilotLamp(PL_RED_OFF);
-      #endif
     }
   }
 }

@@ -9,24 +9,6 @@ void computeIMU () {
   //we separate the 2 situations because reading gyro values with a gyro only setup can be acchieved at a higher rate
   //gyro+nunchuk: we must wait for a quite high delay betwwen 2 reads to get both WM+ and Nunchuk data. It works with 3ms
   //gyro only: the delay to read 2 consecutive values can be reduced to only 0.65ms
-  #if defined(NUNCHUCK)
-    annexCode();
-    while((micros()-timeInterleave)<INTERLEAVING_DELAY) ; //interleaving delay between 2 consecutive reads
-    timeInterleave=micros();
-    ACC_getADC();
-    getEstimatedAttitude(); // computation time must last less than one interleaving delay
-    while((micros()-timeInterleave)<INTERLEAVING_DELAY) ; //interleaving delay between 2 consecutive reads
-    timeInterleave=micros();
-    f.NUNCHUKDATA = 1;
-    while(f.NUNCHUKDATA) ACC_getADC(); // For this interleaving reading, we must have a gyro update at this point (less delay)
-
-    for (axis = 0; axis < 3; axis++) {
-      // empirical, we take a weighted value of the current and the previous values
-      // /4 is to average 4 values, note: overflow is not possible for WMP gyro here
-      gyroData[axis] = (gyroADC[axis]*3+gyroADCprevious[axis])>>2;
-      gyroADCprevious[axis] = gyroADC[axis];
-    }
-  #else
     #if ACC
       ACC_getADC();
       getEstimatedAttitude();
@@ -53,18 +35,6 @@ void computeIMU () {
       gyroADCprevious[axis] = gyroADCinter[axis]>>1;
       if (!ACC) accADC[axis]=0;
     }
-  #endif
-  #if defined(GYRO_SMOOTHING)
-    static int16_t gyroSmooth[3] = {0,0,0};
-    for (axis = 0; axis < 3; axis++) {
-      gyroData[axis] = (int16_t) ( ( (int32_t)((int32_t)gyroSmooth[axis] * (conf.Smoothing[axis]-1) )+gyroData[axis]+1 ) / conf.Smoothing[axis]);
-      gyroSmooth[axis] = gyroData[axis];
-    }
-  #elif defined(TRI)
-    static int16_t gyroYawSmooth = 0;
-    gyroData[YAW] = (gyroYawSmooth*2+gyroData[YAW])/3;
-    gyroYawSmooth = gyroData[YAW];
-  #endif
 }
 
 // **************************************************

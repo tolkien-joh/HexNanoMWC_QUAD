@@ -14,8 +14,10 @@ void writeMotors() { // [1000;2000] => [125;250]
   OCR1A = ((motor[0]<<4) - 16000) + 128;
   OCR1B = ((motor[1]<<4) - 16000) + 128;
   // Timer 4 A & D [1000:2000] => [1000:2000]
-  TC4H = 2047-(((motor[2]-1000)<<1)+16)>>8; OCR4A = (2047-(((motor[2]-1000)<<1)+16)&0xFF); //  pin 5
-  TC4H = (((motor[3]-1000)<<1)+16)>>8; OCR4D = ((((motor[3]-1000)<<1)+16)&0xFF); //  pin 6
+  TC4H = 2047-(((motor[2]-1000)<<1)+16)>>8;
+  OCR4A = (2047-(((motor[2]-1000)<<1)+16)&0xFF); //  pin 5
+  TC4H = (((motor[3]-1000)<<1)+16)>>8;
+  OCR4D = ((((motor[3]-1000)<<1)+16)&0xFF); //  pin 6
 }
 
 /**************************************************************************************/
@@ -38,21 +40,25 @@ void initOutput() {
   }
     
   /******** Specific PWM Timers & Registers for the atmega32u4 (Promicro)   ************/
-      TCCR1A |= (1<<WGM11); // phase correct mode & no prescaler
-      TCCR1A &= ~(1<<WGM10);
+      // phase correct mode, top to 0x01FF, no prescaler (9 bit)
+      TCCR1A |= (1<<WGM11); TCCR1A &= ~(1<<WGM10);
+      // phase and frequency correct mode , top to ICR1, no prescaler (clk_io/1)
       TCCR1B &= ~(1<<WGM12) &  ~(1<<CS11) & ~(1<<CS12);
-      TCCR1B |= (1<<WGM13) | (1<<CS10); 
-      ICR1   |= 0x3FFF; // TOP to 16383;     
-      TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
+      TCCR1B |= (1<<WGM13) | (1<<CS10);
+      ICR1   |= 0x3FFF; // TOP to 16383;
 
+      TCCR1A |= _BV(COM1A1); // connect pin 9 to timer 1 channel A
       TCCR1A |= _BV(COM1B1); // connect pin 10 to timer 1 channel B
 
       // timer 4A
       TCCR4E |= (1<<ENHC4); // enhanced pwm mode
-      TCCR4B &= ~(1<<CS41); TCCR4B |= (1<<CS42)|(1<<CS40); // prescaler to 16
-      TCCR4D |= (1<<WGM40); TC4H = 0x3; OCR4C = 0xFF; // phase and frequency correct mode & top to 1023 but with enhanced pwm mode we have 2047
-      TCCR4A |= (1<<COM4A0)|(1<<PWM4A); // connect pin 5 to timer 4 channel A 
+      // prescaler to 16
+      TCCR4B &= ~(1<<CS41); TCCR4B |= (1<<CS42)|(1<<CS40);
+      // phase and frequency correct mode, top to OCR4C, update of OCR4x at BOTTOM
+      // top to 1023 but with enhanced pwm mode we have 2047
+      TCCR4D |= (1<<WGM40); TC4H = 0x3; OCR4C = 0xFF;
 
+      TCCR4A |= (1<<COM4A0)|(1<<PWM4A); // connect pin 5 to timer 4 channel A
       TCCR4C |= (1<<COM4D1)|(1<<PWM4D); // connect pin 6 to timer 4 channel D
 
   writeAllMotors(MINCOMMAND);

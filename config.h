@@ -160,7 +160,6 @@
       //#define ADXL345
       //#define BMA020
       //#define BMA180
-      //#define NUNCHACK  // if you want to use the nunckuk as a standalone I2C ACC without WMP
       //#define LIS3LV02
       //#define LSM303DLx_ACC
       //#define MMA8451Q
@@ -437,11 +436,6 @@
   /* you may need to change PINx and PORTx plus #shift according to the desired pin! */
   //#define OVERRIDE_V_BATPIN                   A0 // instead of A3    // Analog PIN 3
 
-  //#define OVERRIDE_LEDPIN_PINMODE             pinMode (A1, OUTPUT); // use A1 instead of d13
-  //#define OVERRIDE_LEDPIN_TOGGLE              PINC |= 1<<1; // PINB |= 1<<5;     //switch LEDPIN state (digital PIN 13)
-  //#define OVERRIDE_LEDPIN_OFF                 PORTC &= ~(1<<1); // PORTB &= ~(1<<5);
-  //#define OVERRIDE_LEDPIN_ON                  PORTC |= 1<<1;    // was PORTB |= (1<<5);
-
   //#define OVERRIDE_BUZZERPIN_PINMODE          pinMode (A2, OUTPUT); // use A2 instead of d8
   //#define OVERRIDE_BUZZERPIN_ON               PORTC |= 1<<2 //PORTB |= 1;
   //#define OVERRIDE_BUZZERPIN_OFF              PORTC &= ~(1<<2); //PORTB &= ~1;
@@ -451,13 +445,6 @@
 /****************  SECTION  5 - ALTERNATE SETUP                                            *******/
 /*****************                                                                 ***************/
 /*************************************************************************************************/
-
-  /******                Serial com speed    *********************************/
-    /* This is the speed of the serial interfaces */
-    #define SERIAL0_COM_SPEED 115200
-    #define SERIAL1_COM_SPEED 115200
-    #define SERIAL2_COM_SPEED 115200
-    #define SERIAL3_COM_SPEED 115200
 
     /* interleaving delay in micro seconds between 2 readings WMP/NK in a WMP+NK config
        if the ACC calibration time is very long (20 or 30s), try to increase this delay up to 4000
@@ -604,7 +591,6 @@
     //#define BUZZER
     //#define RCOPTIONSBEEP         // uncomment this if you want the buzzer to beep at any rcOptions change on channel Aux1 to Aux4
     //#define ARMEDTIMEWARNING 330  // (*) Trigger an alarm after a certain time of being armed [s] to save you lipo (if your TX does not have a countdown)
-    //#define PILOTLAMP             //Uncomment if you are using a X-Arcraft Pilot Lamp
 
   /********************************************************************/
   /****           battery voltage monitoring                       ****/
@@ -783,8 +769,6 @@
        time base is main loop cycle time - a value of 6 means to trigger the action every 6th run through the main loop
        example: with cycle time of approx 3ms, do action every 6*3ms=18ms
        value must be [1; 65535] */
-    #define LCD_TELEMETRY_FREQ 23       // to send telemetry data over serial 23 <=> 60ms <=> 16Hz (only sending interlaced, so 8Hz update rate)
-    #define LCD_TELEMETRY_AUTO_FREQ 967 // to step to next telemetry page 967 <=> 3s
     #define PSENSORFREQ 6               // to read hardware powermeter sensor 6 <=> 18ms
     #define VBATFREQ PSENSORFREQ        // to read battery voltage - keep equal to PSENSORFREQ unless you know what you are doing
 

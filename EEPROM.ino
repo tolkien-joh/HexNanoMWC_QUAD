@@ -115,6 +115,9 @@ void LoadDefaults() {
     conf.vbatlevel_crit = VBATLEVEL_CRIT;
     conf.no_vbat = NO_VBAT;
   #endif
+  #ifdef MMGYRO
+    conf.mmgyro = MMGYRO;
+  #endif
   writeParams(0); // this will also (p)reset checkNewConf with the current version number again.
 }
 

@@ -88,7 +88,7 @@
 /***************              Sensor Type definitions              ********************/
 /**************************************************************************************/
 
-#if defined(ADXL345) || defined(BMA020) || defined(BMA180) || defined(NUNCHACK) || defined(MMA7455) || defined(ADCACC) || defined(LIS3LV02) || defined(LSM303DLx_ACC) || defined(MPU6050) || defined(MMA8451Q) || defined(NUNCHUCK)
+#if defined(ADXL345) || defined(BMA020) || defined(BMA180) || defined(NUNCHACK) || defined(MMA7455) || defined(ADCACC) || defined(LIS3LV02) || defined(LSM303DLx_ACC) || defined(MPU6050) || defined(MMA8451Q)
   #define ACC 1
 #else
   #define ACC 0
@@ -186,23 +186,6 @@
   #define POWERMETER
 #endif
 
-#if defined PILOTLAMP 
-  #define    PL_CHANNEL OCR0B  //use B since A can be used by camstab
-  #define    PL_ISR TIMER0_COMPB_vect
-  #define    PL_INIT   TCCR0A=0;TIMSK0|=(1<<OCIE0B);PL_CHANNEL=PL_IDLE;PilotLamp(PL_GRN_OFF);PilotLamp(PL_BLU_OFF);PilotLamp(PL_RED_OFF);PilotLamp(PL_BZR_OFF);
-  #define    BUZZERPIN_ON PilotLamp(PL_BZR_ON);
-  #define    BUZZERPIN_OFF PilotLamp(PL_BZR_OFF);
-  #define    PL_GRN_ON    25    // 100us
-  #define    PL_GRN_OFF   50    // 200us
-  #define    PL_BLU_ON    75    // 300us
-  #define    PL_BLU_OFF   100    // 400us
-  #define    PL_RED_ON    125    // 500us
-  #define    PL_RED_OFF   150    // 600us
-  #define    PL_BZR_ON    175    // 700us
-  #define    PL_BZR_OFF   200    // 800us
-  #define    PL_IDLE      125    // 100us
-#endif
-
 #if defined(PILOTLAMP) || defined(VBAT)
   #define BUZZER
 #endif
@@ -231,12 +214,6 @@
 #ifdef OVERRIDE_V_BATPIN
   #define V_BATPIN OVERRIDE_V_BATPIN
 #endif
-#ifdef OVERRIDE_LEDPIN_PINMODE
-  #define LEDPIN_PINMODE OVERRIDE_LEDPIN_PINMODE
-  #define LEDPIN_TOGGLE  OVERRIDE_LEDPIN_TOGGLE
-  #define LEDPIN_OFF     OVERRIDE_LEDPIN_OFF
-  #define LEDPIN_ON      OVERRIDE_LEDPIN_ON
-#endif
 #ifdef OVERRIDE_BUZZERPIN_PINMODE
   #define BUZZERPIN_PINMODE OVERRIDE_BUZZERPIN_PINMODE
   #define BUZZERPIN_ON      OVERRIDE_BUZZERPIN_ON
@@ -264,23 +241,7 @@
         #error "NUMBER_MOTOR is not set, most likely you have not defined any type of multicopter"
 #endif
 
-#if (defined(LCD_DUMMY) || defined(LCD_SERIAL3W) || defined(LCD_TEXTSTAR) || defined(LCD_VT100) || defined(LCD_TTY) || defined(LCD_ETPP) || defined(LCD_LCD03) || defined(OLED_I2C_128x64) )
-  #define HAS_LCD
-#endif
-
-#if (defined(LCD_CONF) || defined(LCD_TELEMETRY)) && !(defined(HAS_LCD) )
-  #error "LCD_CONF or LCD_TELEMETRY defined, and choice of LCD not defined.  Uncomment one of LCD_SERIAL3W, LCD_TEXTSTAR, LCD_VT100, LCD_TTY or LCD_ETPP, LCD_LCD03, OLED_I2C_128x64"
-#endif
-
 #if defined(POWERMETER) && !(defined(VBAT))
         #error "to use powermeter, you must also define and configure VBAT"
-#endif
-
-#if defined(LCD_TELEMETRY_AUTO) && !(defined(LCD_TELEMETRY))
-        #error "to use automatic telemetry, you MUST also define and configure LCD_TELEMETRY"
-#endif
-
-#if defined(LCD_TELEMETRY_STEP) && !(defined(LCD_TELEMETRY))
-        #error "to use single step telemetry, you MUST also define and configure LCD_TELEMETRY"
 #endif
 #endif	/* _DEF_H */

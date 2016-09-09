@@ -16,6 +16,7 @@ March  2013     V2.2
 
 #include <avr/pgmspace.h>
 #define  VERSION  220
+#undef DEBUG  /* activate print_debug_msg() in debug.h */
 
 #if defined(HEX_NANO)
 volatile uint16_t serialRcValue[RC_CHANS] = {1502, 1502, 1502, 1502, 1502, 1502, 1502, 1502}; 
@@ -179,7 +180,7 @@ struct flags_struct {
 } f;
 
 //for log
-#if defined(LOG_VALUES) || defined(LCD_TELEMETRY) || defined(ARMEDTIMEWARNING)  || defined(LOG_PERMANENT)
+#if defined(LOG_VALUES) || defined(ARMEDTIMEWARNING)  || defined(LOG_PERMANENT)
   static uint32_t armedTime = 0;
 #endif
 
@@ -275,6 +276,9 @@ static struct {
     uint8_t vbatlevel_warn2;
     uint8_t vbatlevel_crit;
     uint8_t no_vbat;
+  #endif
+  #ifdef MMGYRO
+    uint8_t mmgyro;
   #endif
   int16_t minthrottle;
   uint8_t  checksum;      // MUST BE ON LAST POSITION OF CONF STRUCTURE ! 
@@ -406,7 +410,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
     if (cycleTime < cycleTimeMin) cycleTimeMin = cycleTime; // remember lowscore
   #endif
   if (f.ARMED)  {
-    #if defined(LCD_TELEMETRY) || defined(ARMEDTIMEWARNING) || defined(LOG_PERMANENT)
+    #if defined(ARMEDTIMEWARNING) || defined(LOG_PERMANENT)
       armedTime += (uint32_t)cycleTime;
     #endif
     #if defined(VBAT)
@@ -417,7 +421,7 @@ void annexCode() { // this code is excetuted at each loop and won't interfere wi
 
 void system_init(void)
 {	
-	SerialOpen(1, SERIAL1_COM_SPEED);
+	SerialOpen(1, 115200);
 	LEDPIN_PINMODE;
 	POWERPIN_PINMODE;
 	BUZZERPIN_PINMODE;
@@ -454,7 +458,7 @@ void system_init(void)
 	plog.armed_time = 0;   // lifetime in seconds
 	//plog.running = 0; 	  // toggle on arm & disarm to monitor for clean shutdown vs. powercut
   #endif
-	 debugmsg_append_str("initialization completed\n");
+	debugmsg_append_str("initialization completed\n");
 }
 
 
@@ -463,8 +467,6 @@ void setup()
   calibration_flag = 0;
   system_init();
 
-  conf.activate[BOXARM] = 1;
-  rcOptions[BOXARM] = 1;
   Serial.begin(115200);
 }
 
@@ -488,11 +490,6 @@ void go_arm() {
       headFreeModeHold = heading;
       #if defined(VBAT)
         if (vbat > conf.no_vbat) vbatMin = vbat;
-      #endif
-      #ifdef LCD_TELEMETRY // reset some values when arming
-        #if BARO
-           BAROaltMax = BaroAlt;
-        #endif
       #endif
       #ifdef LOG_PERMANENT
         plog.arm++;           // #arm events
@@ -530,6 +527,10 @@ void go_disarm() {
   }
 }
 
+#ifdef DEBUG
+#include "debug.h"
+#endif
+
 // ******** Main Loop *********
 void loop () {
   static uint8_t rcDelayCommand; // this indicates the number of time (multiple of RC measurement at 50Hz) the sticks must be maintained to run or switch off motors
@@ -564,19 +565,8 @@ void loop () {
      rcData[6] = serialRcValue[6];
      rcData[7] = serialRcValue[7];
 #endif
-#if 0
-     Serial.print(rcData[3]);
-     Serial.print(", ");
-     Serial.print(motor[0]);
-     Serial.print(", ");
-     Serial.print(rcCommand[THROTTLE]);
-     Serial.print(", ");
-     Serial.print(axisPID[ROLL]);
-     Serial.print(", ");
-     Serial.print(axisPID[PITCH]);
-     Serial.print(", ");
-     Serial.println(axisPID[YAW]);
-     delay(800);
+#ifdef DEBUG
+     print_debug_msg();
 #endif
 
     #if defined(FAILSAFE)
