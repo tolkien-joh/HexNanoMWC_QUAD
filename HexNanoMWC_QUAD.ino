@@ -468,6 +468,8 @@ void setup()
   system_init();
 
   Serial.begin(115200);
+  /* default value 986 will trigger motor0, motor1 fully by tolkien */
+  conf.minthrottle = MINTHROTTLE;
 }
 
 //------------------------------------------------------------------
